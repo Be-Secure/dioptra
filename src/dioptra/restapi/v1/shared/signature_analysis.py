@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any, Container, Iterator, Optional, Union
 
 from dioptra.task_engine import type_registry
+from dioptra.restapi.errors import InvalidPythonError
 
 _PYTHON_TO_DIOPTRA_TYPE_NAME = {
     "str": "string",
@@ -683,13 +684,19 @@ def get_plugin_signatures(
 
     Yields:
         Function signature information data structures, as dicts
+
+    Raises:
+        InvalidPythonError: If the python code cannot be parsed
     """
-    if filepath:
-        ast = ast_module.parse(
-            python_source, filename=filepath, feature_version=sys.version_info[0:2]
-        )
-    else:
-        ast = ast_module.parse(python_source, feature_version=sys.version_info[0:2])
+    try:
+        if filepath:
+            ast = ast_module.parse(
+                python_source, filename=filepath, feature_version=sys.version_info[0:2]
+            )
+        else:
+            ast = ast_module.parse(python_source, feature_version=sys.version_info[0:2])
+    except SyntaxError as e:
+        raise InvalidPythonError(f"Failed to parse Python source: {e}") from e
 
     for plugin_func in _find_plugins(ast):
 
