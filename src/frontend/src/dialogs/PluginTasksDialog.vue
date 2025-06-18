@@ -16,68 +16,67 @@
           <p v-if="errorMessage" class="text-negative" style="max-width: 500px;">
             Error: {{ errorMessage }}
           </p>
-      <TableComponent
-        :rows="tasks"
-        :columns="taskColumns"
-        title="Plugin Tasks"
-        ref="tableRef"
-        :hideToggleDraft="true"
-        :hideCreateBtn="true"
-        :hideSearch="true"
-        :disableSelect="true"
-        :hideOpenBtn="true"
-        :hideDeleteBtn="true"
-        rightCaption="*Click param to edit, or X to delete"
-      >
-        <template #body-cell-name="props">
-        <div style="font-size: 18px;">
-          {{ props.row.name }}
-          <q-btn icon="edit" round size="sm" color="primary" flat />
-          <p v-if="props.row.missing_types.length > 0" class="text-caption text-negative">
-            Missing Types:
-            <div v-for="type in props.row.missing_types">
-              {{ type.name }}
+          <TableComponent
+            :rows="tasks"
+            :columns="taskColumns"
+            title="Plugin Tasks"
+            ref="tableRef"
+            :hideToggleDraft="true"
+            :hideCreateBtn="true"
+            :hideSearch="true"
+            :disableSelect="true"
+            :hideOpenBtn="true"
+            :hideDeleteBtn="true"
+          >
+            <template #body-cell-name="props">
+            <div style="font-size: 18px;">
+              {{ props.row.name }}
+              <q-btn icon="edit" round size="sm" color="primary" flat />
+              <p v-if="props.row.missing_types.length > 0" class="text-caption text-negative">
+                Missing Types:
+                <div v-for="type in props.row.missing_types">
+                  {{ type.name }}
+                </div>
+              </p>
             </div>
-          </p>
-        </div>
-          <q-popup-edit v-model="props.row.name" v-slot="scope">
-            <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
-          </q-popup-edit>
-        </template>
-        <template #body-cell-inputParams="props">
-          <div class="column items-end">
-            <q-chip
-              v-for="(param, i) in props.row.inputs"
-              :key="i"
-              color="indigo"
-              text-color="white"
-              dense
-            >
-              {{ `${param.name}` }}
-              <span v-if="param.required" class="text-red">*</span>
-              {{ `: ${param.type}` }}
-            </q-chip>
-          </div>
-        </template>
-        <template #body-cell-outputParams="props">
-          <div class="column items-end">
-          <q-chip
-            v-for="(param, i) in props.row.outputs"
-            :key="i"
-            color="purple"
-            text-color="white"
-            dense
-            :label="`${param.name}: ${param.type}`"
-          />
-          </div>
-        </template>
-        <template #body-cell-actions="props">
-          <q-checkbox
-            v-model="selectedTasks"
-            :val="props.row"
-          />
-        </template>
-      </TableComponent>
+              <q-popup-edit v-model="props.row.name" v-slot="scope">
+                <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+              </q-popup-edit>
+            </template>
+            <template #body-cell-inputParams="props">
+              <div class="column items-end">
+                <q-chip
+                  v-for="(param, i) in props.row.inputs"
+                  :key="i"
+                  color="indigo"
+                  text-color="white"
+                  dense
+                >
+                  {{ `${param.name}` }}
+                  <span v-if="param.required" class="text-red">*</span>
+                  {{ `: ${param.type}` }}
+                </q-chip>
+              </div>
+            </template>
+            <template #body-cell-outputParams="props">
+              <div class="column items-end">
+              <q-chip
+                v-for="(param, i) in props.row.outputs"
+                :key="i"
+                color="purple"
+                text-color="white"
+                dense
+                :label="`${param.name}: ${param.type}`"
+              />
+              </div>
+            </template>
+            <template #body-cell-select="props">
+              <q-checkbox
+                v-model="selectedTasks"
+                :val="props.row"
+              />
+            </template>
+          </TableComponent>
         </q-card-section>
 
         <q-separator />
@@ -98,11 +97,8 @@
            </q-btn>
         </q-card-actions>
       </q-form>
-
-
     </q-card>
   </q-dialog>
-
 </template>
 
 <script setup>
@@ -145,7 +141,7 @@ async function suggestPluginTasks() {
 }
 
 const taskColumns = [
-  { name: 'actions', label: 'Actions', align: 'center', },
+  { name: 'select', label: 'Select', align: 'center', },
   { name: 'name', label: 'Name', align: 'left', field: 'name', sortable: false, classes: 'vertical-top', },
   { name: 'inputParams', label: 'Input Params', field: 'inputParams', align: 'right', sortable: false, classes: 'vertical-top', },
   { name: 'outputParams', label: 'Output Params', field: 'outputParams', align: 'right', sortable: false, classes: 'vertical-top', },
